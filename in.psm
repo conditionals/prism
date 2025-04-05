@@ -1,4 +1,5 @@
-int x = 15;
-float y = 5.5;
-float z = x + y;
-print z + z;
+float floatingPointNumber = 10.55;
+int normalIntegerValue = 5;
+
+print "Hello, world!";
+print floatingPointNumber + normalIntegerValue;
