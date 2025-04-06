@@ -1,4 +1,5 @@
 #include "../include/parser.hpp"
+#include <stdexcept>
 
 Token Parser::currentToken() const {
     return (pos < tokens.size()) ? tokens[pos] : Token{TokenType::SEMICOLON, ";"};
@@ -62,28 +63,58 @@ ASTNode Parser::parsePrint() {
     return node;
 }
 
-ASTNode Parser::parseExpression() {
+ASTNode Parser::parseUrnary() {
+    if(currentToken().type == TokenType::MINUS){
+	ASTNode node{NodeType::EXPRESSION, "-"};
+	advance();
+
+	node.children.push_back(parseUrnary());
+	return node;
+    }
+
+    return parsePrimary();
+}
+
+ASTNode Parser::parsePrimary(){
     Token t = currentToken();
     ASTNode node{NodeType::EXPRESSION, ""};
 
-    if(t.type == TokenType::IDENTIFIER){
-	node.children.push_back({NodeType::IDENTIFIER, t.value});
+    if(t.type == TokenType::NUMBER){
+	node.children.push_back({NodeType::NUMBER, t.value});
 	advance();
     }
-    else if(t.type == TokenType::NUMBER){
-	node.children.push_back({NodeType::NUMBER, t.value});
+    else if(t.type == TokenType::IDENTIFIER){
+	node.children.push_back({NodeType::IDENTIFIER, t.value});
 	advance();
     }
     else if(t.type == TokenType::STRING){
 	node.children.push_back({NodeType::STRING, t.value});
 	advance();
-    }
-
-    if(currentToken().type == TokenType::PLUS){
-	node.value = "+";
-	advance(); // skip +
-	node.children.push_back(parseExpression());
-    }
+    } else throw std::runtime_error("unknown token. expected string/num/identifier");
 
     return node;
+}
+
+ASTNode Parser::parseExpression() {
+    ASTNode left = parseUrnary();
+
+    while(true){
+	TokenType opTok = currentToken().type;
+	if(opTok == TokenType::PLUS || opTok == TokenType::MINUS){
+	    ASTNode newNode{NodeType::EXPRESSION, (opTok == TokenType::PLUS ? "+" : "-")};
+	    advance();
+
+	    newNode.children.push_back(left);
+
+	    ASTNode right = parseUrnary();
+	    newNode.children.push_back(right);
+
+	    left = newNode;
+	}
+	else {
+	    break;
+	}
+    }
+
+    return left;
 }

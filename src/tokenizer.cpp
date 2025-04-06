@@ -46,14 +46,28 @@ std::vector<Token> tokenize(const std::string& line){
 	    continue;
 	}
 
-	if(std::isspace(c) || c==';' || c=='+' || c=='='){
+	if(std::isspace(c) || c==';' || c=='+' || c=='=' || c=='-'){
 	    if(!current.empty()){
 		tokens.push_back(classifyToken(current));
 		current = "";
 	    }
-
+	    
+	    TokenType type;
 	    if(!std::isspace(c)){
-		TokenType type = (c == '=' ? TokenType::EQUALS : c == '+' ? TokenType::PLUS : TokenType::SEMICOLON);
+		switch(c){
+		    case '=':
+			type = TokenType::EQUALS;
+			break;
+		    case '+':
+			type = TokenType::PLUS;
+			break;
+		    case '-':
+			type = TokenType::MINUS;
+			break;
+		    case ';':
+			type = TokenType::SEMICOLON;
+			break;
+		}
 		tokens.push_back({type, std::string(1, c)});
 	    }
 	}

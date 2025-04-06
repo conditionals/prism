@@ -1,5 +1,2 @@
-float floatingPointNumber = 10.55;
-int normalIntegerValue = 5;
-
-print "Hello, world!";
-print floatingPointNumber + normalIntegerValue;
+int x = -100 + 10;
+print x;

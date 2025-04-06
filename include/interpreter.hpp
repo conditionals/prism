@@ -57,5 +57,7 @@ class Interpreter {
 	Value evalStringLiteral(const ASTNode& node);
 
 	Value addValues(const Value& left, const Value& right);
-
+	Value subValues(const Value& left, const Value& right);
+	
+	Value negateValue(const Value& value);
 };

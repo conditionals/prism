@@ -32,4 +32,6 @@ class Parser {
 	ASTNode parseVarDecl();
 	ASTNode parsePrint();
 	ASTNode parseExpression();
+	ASTNode parseUrnary();
+	ASTNode parsePrimary();
 };

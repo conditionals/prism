@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 
+
 int main(int argc, char* argv[]) {
     if(argc < 2) throw std::runtime_error("must provide input file");
     std::ifstream file(argv[1]);
@@ -21,7 +22,5 @@ int main(int argc, char* argv[]) {
     Interpreter interpreter;
     Value result = interpreter.interpret(ast);
 
-
-    
     return 0;
 }

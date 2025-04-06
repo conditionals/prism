@@ -63,7 +63,14 @@ Value Interpreter::evalPrint(const ASTNode& node) {
 
 
 Value Interpreter::evalExpression(const ASTNode& node) {
-    if(node.children.size() == 1) return evaluateNode(node.children[0]);
+    if(node.children.size() == 1) {
+	Value operand = evaluateNode(node.children[0]);
+	if(node.value == "-"){
+	    return negateValue(operand);
+	}
+
+	return operand;
+    }
     if(node.children.empty()) throw std::runtime_error("no children in expr");
 
     Value lVal = evaluateNode(node.children[0]);
@@ -72,6 +79,7 @@ Value Interpreter::evalExpression(const ASTNode& node) {
     const std::string& op = node.value;
 
     if(op == "+") return addValues(lVal, rVal);
+    if(op == "-") return subValues(lVal, rVal);
 
     throw std::runtime_error("unrecognized operator: " + op);
 }
@@ -111,29 +119,25 @@ Value Interpreter::addValues(const Value& lVal, const Value& rVal){
     return Value(lVal.intVal + rVal.intVal);
 }
 
+Value Interpreter::subValues(const Value& lVal, const Value& rVal) {
+   if(lVal.type == Value::Type::String || rVal.type == Value::Type::String) throw std::runtime_error("cannot perform subtraction on type string"); 
 
+   if(lVal.type == Value::Type::Float || rVal.type == Value::Type::Float){
+	float l = lVal.type == Value::Type::Float ? lVal.floatVal : static_cast<float>(lVal.intVal);
+	float r = rVal.type == Value::Type::Float ? rVal.floatVal : static_cast<float>(rVal.intVal);
+	return l - r;
+   }
 
+   return lVal.intVal - rVal.intVal;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Value Interpreter::negateValue(const Value& val){
+    switch(val.type){
+	case Value::Type::Int:
+	    return Value(-val.intVal);
+        case Value::Type::Float:
+	    return Value(-val.floatVal);
+	default:
+	    throw std::runtime_error("cannot apply urnary minus to type");
+    }
+}

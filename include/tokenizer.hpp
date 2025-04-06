@@ -12,6 +12,7 @@ enum class TokenType {
     STRING,      // string literals
     EQUALS,      // "="
     PLUS,        // "+"
+    MINUS, 	 // "-" (also urnary negative)
     PRINT,       // "print"
     SEMICOLON    // ";"
 };
